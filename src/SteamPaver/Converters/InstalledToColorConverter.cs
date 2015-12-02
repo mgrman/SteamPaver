@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 
-namespace SteamPaver_Main
+namespace SteamPaver
 {
     class InstalledToColorConverter : IValueConverter
     {

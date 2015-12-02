@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace SteamPaver_Main
+namespace SteamPaver
 {
     public class AsyncRelayCommand : ICommand
     {

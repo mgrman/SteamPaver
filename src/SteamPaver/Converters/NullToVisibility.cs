@@ -1,24 +1,22 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
-namespace SteamPaver_Main
+namespace SteamPaver
 {
-    class ImageToAspectRatioConverter : IValueConverter
+    class NullToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value is BitmapSource)
-            {
-                var bs = value as BitmapSource;
-                return bs.Width / bs.Height;
-            }
-            return 1.0;
+            
+            return value==null?Visibility.Hidden:Visibility.Visible;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

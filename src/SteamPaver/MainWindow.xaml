@@ -1,9 +1,10 @@
-﻿<Window x:Class="SteamPaver_Main.MainWindow"
+﻿<Window x:Class="SteamPaver.MainWindow"
+        x:Name="Window"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SteamPaver_Main"
+        xmlns:local="clr-namespace:SteamPaver"
         mc:Ignorable="d"
         Title="Steam Paver" Height="600" Width="800">
     <Grid>
@@ -22,12 +23,12 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0">
-                <UniformGrid Rows="1">
+            <StackPanel Grid.Row="0" >
+                <UniformGrid Rows="1" DataContext="{Binding UserData}">
                     <Label FontWeight="SemiBold">
                         <TextBlock Text="Steam Community Name :"/>
                     </Label>
-                    <TextBox Text="{Binding SteamCommunityName}"/>
+                    <TextBox Text="{Binding SteamCommunityId}"/>
                 </UniformGrid>
                 <Button Command="{Binding RefreshCommand}">
                     <Label>
@@ -48,7 +49,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
-        <local:GameView Grid.Row="0" Grid.Column="1" DataContext="{Binding SelectedItem,ElementName=GameList}">
+        <local:GameView Grid.Row="0" Grid.Column="1" DataContext="{Binding SelectedItem,ElementName=GameList,Converter={StaticResource CreateViewModel},ConverterParameter={x:Type local:GameDataViewModel}}">
             
         </local:GameView>
     </Grid>

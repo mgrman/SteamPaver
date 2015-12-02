@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamPaver_TileCreator", "SteamPaver_TileCreator\SteamPaver_TileCreator.csproj", "{570F1EBE-E83F-483E-8E52-996B935A70EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamPaver_Main", "SteamPaver_Main\SteamPaver_Main.csproj", "{F0F9AC4A-3E3E-49E0-A393-4778361EAC01}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamPaver", "SteamPaver\SteamPaver.csproj", "{F0F9AC4A-3E3E-49E0-A393-4778361EAC01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

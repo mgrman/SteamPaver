@@ -15,20 +15,14 @@ using Newtonsoft.Json;
 using System.Windows;
 using System.Text.RegularExpressions;
 
-namespace SteamPaver_Main
+namespace SteamPaver
 {
     [ImplementPropertyChanged]
     public class GameData
     {
+        public string Name { get; set; }
 
-        public string Name
-        {
-            get; set;
-        }
-        public int GameID
-        {
-            get; set;
-        }
+        public int GameID { get; set; }
 
         private BitmapSource _squareDraft;
         public BitmapSource SquareDraft
@@ -45,21 +39,21 @@ namespace SteamPaver_Main
 
                 if (value == null)
                 {
-                    CroppingRectangle = new Rect(0,0,100,100);
+                    CroppingRectangle = new Rect(0, 0, 100, 100);
                     SquareFinal = null;
                 }
                 else
                 {
                     if (_squareDraft.IsDownloading)
                     {
-                        EventHandler handler=null; 
-                        handler= (o, e) =>
-                        {
-                            _squareDraft.DownloadCompleted -= handler;
+                        EventHandler handler = null;
+                        handler = (o, e) =>
+                         {
+                             _squareDraft.DownloadCompleted -= handler;
 
-                            double minSize = Math.Min(value.Width, value.Height);
-                            CroppingRectangle = new Rect(0, 0, minSize, minSize);
-                        };
+                             double minSize = Math.Min(value.Width, value.Height);
+                             CroppingRectangle = new Rect(0, 0, minSize, minSize);
+                         };
                         _squareDraft.DownloadCompleted += handler;
                     }
                     else
@@ -88,48 +82,45 @@ namespace SteamPaver_Main
             }
         }
 
+        public BitmapSource SquareFinal { get; private set; }
 
-        public BitmapSource SquareFinal
-        {
-            get; set;
-        }
+        private Color _color;
         public Color Color
         {
-            get; set;
+            get { return _color; }
+            set
+            {
+                value.A = 255;
+                if (_color == value) return;
+                _color = value;
+            }
         }
 
+        public bool ShowLabel { get; set; }
 
         public bool Installed { get; private set; }
 
+        public GameData()
+        {
+            Color = Colors.Black;
+        }
 
         public GameData(int gameID)
+            :this()
         {
             GameID = gameID;
+            UpdateInstalled();
+            UpdateNameFromSteam();
+            UpdateImageFromSteam();
         }
 
-        public static GameData Create(int gameID)
-        {
-            var data = new GameData(gameID);
-            data.ResetName();
-            data.UpdateInstalled();
-            data.SetWideImageFromSteam();
 
-            return data;
-        }
-
-        public void UpdateInstalled()
-        {
-            Installed = Steam.AllInstaledGames.GetGames().Contains(GameID);
-        }
-
-        public void ResetName()
+        private void UpdateNameFromSteam()
         {
             Name = Steam.IdToName.GetName(GameID) ?? $"<Game not found - {GameID}>";
         }
 
-
-
-        public void SetWideImageFromSteam()
+        public void UpdateImageFromSteam()
         {
             string url = String.Format("http://cdn.akamai.steamstatic.com/steam/apps/{0}/header.jpg", GameID);
 
@@ -139,8 +130,21 @@ namespace SteamPaver_Main
             });
         }
 
+        public void SetFinalAsTile()
+        {
+            if (SquareFinal == null)
+                throw new InvalidOperationException("SquareFinal cannot be Null when calling this method");
 
-        public void CropDraft(Rect rectangle)
+            var tileCreator = SteamPaver.TileCreator.VersionResolver.Creator;
+            if (tileCreator == null)
+                throw new InvalidOperationException("No Tile creator available for this Windows version!");
+
+            tileCreator.CreateTile(Name, $"steam://rungameid/{GameID}", SquareFinal, Color, ShowLabel);
+        }
+
+
+
+        private void CropDraft(Rect rectangle)
         {
             CroppingRectangle = rectangle;
 
@@ -168,58 +172,9 @@ namespace SteamPaver_Main
 
         }
 
-
-        public void SetFinalAsTile()
+        private void UpdateInstalled()
         {
-            if (SquareFinal == null)
-                throw new InvalidOperationException("SquareFinal cannot be Null when calling this method");
-
-            SteamPaver_TileCreator.TileCreator.CreateTile(Name, GameID, SquareFinal);
+            Installed = Steam.AllInstaledGames.GetGames().Contains(GameID);
         }
-
-
-
-
-
-
-        //#endregion
-
-        //#region ColorFromSquare
-
-        //public void SetColorFromSquare()
-        //{
-        //    if (Square == null)
-        //        Color = Color.White;
-        //    else
-        //        Color = Utils.GetAverageColorUsingHSL(Square);
-        //}
-
-        //#endregion
-
-        //#region ColorFromWide
-
-        //public void SetColorFromWide()
-        //{
-        //    if (Wide == null)
-        //        Color = Color.White;
-        //    else
-        //        Color = Utils.GetAverageColorUsingHSL(Wide);
-        //}
-
-        //#endregion
-
-        //#region IDisposable
-
-        //public void Dispose()
-        //{
-        //    foreach (var obj in _resources)
-        //    {
-        //        obj.Dispose();
-        //    }
-        //}
-
-        //#endregion
-
-
     }
 }

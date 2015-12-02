@@ -8,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace SteamPaver_Main.Steam
+namespace SteamPaver.Steam
 {
     public class AllInstaledGames
     {

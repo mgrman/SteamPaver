@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SteamPaver_Main
+namespace SteamPaver
 {
     /// <summary>
     /// Interaction logic for ImageCropper.xaml

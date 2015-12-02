@@ -9,7 +9,7 @@ using Microsoft.Win32;
 using System.Collections.Specialized;
 using System.Windows.Input;
 
-namespace SteamPaver_Main
+namespace SteamPaver
 {
     [ImplementPropertyChanged]
     public class SteamPaverViewModel
@@ -24,18 +24,16 @@ namespace SteamPaver_Main
 
         private Lazy<AsyncRelayCommand> _refreshCommand;
         public ICommand RefreshCommand { get { return _refreshCommand.Value; } }
-
-        public string SteamCommunityName { get; set; }
+        
+        public UserData UserData { get; private set; }
 
         public async Task Refresh()
         {
-
-
             GameDatas.SuspendCollectionChanged = true;
             var games = Task.Run<IEnumerable<GameData>>(() =>
             {
-                return Steam.AllOwnedGames.GetGames(SteamCommunityName)
-                    .Select(o => GameData.Create(o))
+                return Steam.AllOwnedGames.GetGames(UserData.SteamCommunityId)
+                    .Select(o => new GameData(o))
                     .OrderBy(o => o.Installed ? 0 : 1)
                     .ThenBy(o => o.Name)
                     .ToList();

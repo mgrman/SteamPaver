@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,34 +15,22 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SteamPaver_Main
+namespace SteamPaver
 {
     /// <summary>
     /// Interaction logic for GameView.xaml
     /// </summary>
     public partial class GameView : UserControl
     {
-        public GameData Model { get { return DataContext as GameData; } }
-
         public GameView()
         {
             InitializeComponent();
         }
-
-        //public ICommand CropDraftCommand
-        //{
-        //    get
-        //    {
-        //        return new RelayCommand(()=> Model.CropDraft(Cropper.Selection));
-        //    }
-        //}
-
-        public ICommand SetAsTileCommand
+        
+        private void FocusOnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            get
-            {
-                return new RelayCommand(()=> Model.SetFinalAsTile(),()=>Model!=null && Model.SquareFinal!=null);
-            }
+            (sender as FrameworkElement).Focusable = true;
+           var res= (sender as FrameworkElement).Focus();
         }
     }
 }

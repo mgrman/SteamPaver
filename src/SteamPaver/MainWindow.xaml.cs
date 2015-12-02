@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SteamPaver_Main
+namespace SteamPaver
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -23,7 +24,7 @@ namespace SteamPaver_Main
         public MainWindow()
         {
             InitializeComponent();
-            
+
         }
     }
 }

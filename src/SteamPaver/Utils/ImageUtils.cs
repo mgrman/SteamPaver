@@ -9,7 +9,7 @@ using System.Drawing;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 
-namespace SteamPaver_Main
+namespace SteamPaver
 {
     static class ImageUtils
     {

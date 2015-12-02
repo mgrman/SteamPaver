@@ -1,0 +1,113 @@
+﻿<UserControl x:Class="SteamPaver.GameView"
+             x:Name="Control"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:SteamPaver"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=local:GameDataViewModel}"
+             d:DesignHeight="300" d:DesignWidth="600"
+              MouseDown="FocusOnMouseDown">
+
+    <UserControl.InputBindings>
+        <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteImageCommand}"/>
+    </UserControl.InputBindings>
+
+    <Grid  Visibility="{Binding Converter={StaticResource NullToVisibility}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <DockPanel Grid.Row="0" DataContext="{Binding Model}">
+            <Label DockPanel.Dock="Right"  HorizontalAlignment="Right" FontWeight="Thin" VerticalAlignment="Center">
+                <TextBlock Text="{Binding GameID}" HorizontalAlignment="Right" />
+            </Label>
+            <Label DockPanel.Dock="Top" FontSize="18" FontFamily="Segoe WP Semibold">
+                <TextBlock Text="{Binding Name}" />
+            </Label>
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                <Label >
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="FontWeight" Value="Normal"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ShowLabel}" Value="True">
+
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                    <TextBlock Text="Show Label on tile" />
+                </Label>
+                <CheckBox IsChecked="{Binding ShowLabel}"
+                          RenderTransformOrigin="0.5,0.5" 
+                          VerticalAlignment="Center" 
+                          HorizontalAlignment="Center">
+                    <CheckBox.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform ScaleX="1.5" ScaleY="1.55"/>
+                            <SkewTransform/>
+                            <RotateTransform/>
+                            <TranslateTransform/>
+                        </TransformGroup>
+                    </CheckBox.RenderTransform>
+                </CheckBox>
+
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                <Label >
+                    <TextBlock Text="Background Color" />
+                </Label>
+                <xctk:ColorPicker Width="50" 
+                                  SelectedColor="{Binding Color}" 
+                                  ShowAvailableColors="False" 
+                                  ShowDropDownButton="False" 
+                                  ColorMode="ColorCanvas" 
+                                  ShowStandardColors="False" 
+                                  UsingAlphaChannel="False" 
+                                  ShowAdvancedButton="False"/>
+
+            </StackPanel>
+        </DockPanel>
+        <Grid Grid.Row="1" DataContext="{Binding Model}" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+
+                <GroupBox Header="Draft image" Grid.Row="0" Grid.Column="0" ClipToBounds="True">
+                    <local:ImageCropper x:Name="Cropper" Image="{Binding SquareDraft}" CroppingRectangle="{Binding CroppingRectangle}" Focusable="True" >
+                    </local:ImageCropper>
+                </GroupBox>
+                <GroupBox Header="Final image" Grid.Row="0" Grid.Column="1">
+                    <Viewbox Stretch="Uniform"  MaxWidth="150" MaxHeight="150">
+                        <Grid x:Name="RootGrid" Background="{Binding Color}" Width="150" Height="150">
+                            <Image Source="{Binding SquareFinal}" Stretch="Fill"  />
+                            <Label  HorizontalAlignment="Left" 
+                                    VerticalAlignment="Bottom"
+                                    Visibility="{Binding ShowLabel,Converter={StaticResource BoolToVisibility}}">
+                                <TextBlock Text="{Binding Name}"/>
+                            </Label>
+                        </Grid>
+                    </Viewbox>
+                    
+                </GroupBox>
+            </Grid>
+        </Grid>
+
+        <DockPanel Grid.Row="2" LastChildFill="False">
+            <Button DockPanel.Dock="Right" Command="{Binding SetAsTileCommand}">
+                <Label FontWeight="SemiBold">
+                    <TextBlock>
+                        Create Tile
+                    </TextBlock>
+                </Label>
+            </Button>
+        </DockPanel>
+    </Grid>
+</UserControl>
