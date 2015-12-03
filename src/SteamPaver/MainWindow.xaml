@@ -36,7 +36,7 @@
                     </Label>
                 </Button>
             </StackPanel>
-            <ListBox Grid.Row="1" ItemsSource="{Binding GameDatas,IsAsync=True}" x:Name="GameList">
+            <ListBox Grid.Row="1" ItemsSource="{Binding GameDatas,IsAsync=True}" SelectedItem="{Binding SelectedGameData}">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -49,7 +49,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
-        <local:GameView Grid.Row="0" Grid.Column="1" DataContext="{Binding SelectedItem,ElementName=GameList,Converter={StaticResource CreateViewModel},ConverterParameter={x:Type local:GameDataViewModel}}">
+        <local:GameView Grid.Row="0" Grid.Column="1" DataContext="{Binding SelectedGameData,Converter={StaticResource CreateViewModel},ConverterParameter={x:Type local:GameDataViewModel}}">
             
         </local:GameView>
     </Grid>

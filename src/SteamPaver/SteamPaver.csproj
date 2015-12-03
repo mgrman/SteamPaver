@@ -87,6 +87,8 @@
     <Compile Include="Converters\ImageToAspectRatioConverter.cs" />
     <Compile Include="Converters\InstalledToColorConverter.cs" />
     <Compile Include="Models\UserData.cs" />
+    <Compile Include="Utils\CacheManager.cs" />
+    <Compile Include="Utils\ReflectionUtils.cs" />
     <Compile Include="ViewModels\GameDataViewModel.cs" />
     <Compile Include="Views\GameView.xaml.cs">
       <DependentUpon>GameView.xaml</DependentUpon>

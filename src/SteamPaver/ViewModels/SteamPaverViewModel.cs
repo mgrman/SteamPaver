@@ -16,15 +16,78 @@ namespace SteamPaver
     {
         public SteamPaverViewModel()
         {
-            _refreshCommand = AsyncRelayCommand.Lazy(() => Refresh(),null,true);
+            _refreshCommand = AsyncRelayCommand.Lazy(() => Refresh(), null, true);
             GameDatas = new ObservableCollectionEx<GameData>();
+
+            var cachedGameDatas = CacheManager.LoadFromCache<GameData>()
+                    .OrderBy(o => o.Installed ? 0 : 1)
+                    .ThenBy(o => o.Name);
+            foreach (var cachedGameData in cachedGameDatas)
+            {
+                GameDatas.Add(cachedGameData);
+            }
+
+            GameDatas.CollectionChanged += (o, e) =>
+            {
+                switch (e.Action)
+                {
+                    case NotifyCollectionChangedAction.Add:
+
+                        foreach(GameData item in e.NewItems)
+                            item.SaveToCache();
+                        break;
+                    case NotifyCollectionChangedAction.Remove:
+                        foreach (GameData item in e.OldItems)
+                            item.RemoveFromCache();
+                        break;
+                    default:
+                        break;
+                }
+            };
+
+            UserData = CacheManager.LoadFromCache<UserData>().FirstOrDefault();
+            if (UserData == null)
+            {
+                UserData = new UserData();
+                UserData.SaveToCache();
+            }
+
+
+            UserData.PropertyChanged += (o, e) =>
+            {
+                UserData.SaveToCache();
+            };
+            App.Current.Exit += (o, e) =>
+            {
+                UserData.SaveToCache();
+                if (SelectedGameData != null)
+                    SelectedGameData.SaveToCache();
+
+            };
+
         }
 
         public ObservableCollectionEx<GameData> GameDatas { get; private set; }
 
+        private GameData _selectedGameData;
+        public GameData SelectedGameData
+        {
+            get { return _selectedGameData; }
+            set
+            {
+                if (_selectedGameData == value) return;
+
+                var oldGameData = _selectedGameData;
+                if(oldGameData!= null)
+                    oldGameData.SaveToCache();
+
+                _selectedGameData = value;
+            }
+        }
+
         private Lazy<AsyncRelayCommand> _refreshCommand;
         public ICommand RefreshCommand { get { return _refreshCommand.Value; } }
-        
+
         public UserData UserData { get; private set; }
 
         public async Task Refresh()
@@ -44,6 +107,7 @@ namespace SteamPaver
             foreach (var game in (await games))
             {
                 GameDatas.Add(game);
+                game.SaveToCache();
             }
             GameDatas.SuspendCollectionChanged = false;
             GameDatas.RefreshBinding();

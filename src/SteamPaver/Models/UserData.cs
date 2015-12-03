@@ -1,6 +1,8 @@
-﻿using PropertyChanged;
+﻿using Newtonsoft.Json;
+using PropertyChanged;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,8 +10,20 @@ using System.Threading.Tasks;
 namespace SteamPaver
 {
     [ImplementPropertyChanged]
-    public class UserData
+    [JsonObject()]
+    public class UserData:ICacheable,INotifyPropertyChanged
     {
+        
         public string SteamCommunityId { get; set; }
+
+        string ICacheable.InstanceID
+        {
+            get
+            {
+                return "UserData";
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
     }
 }
