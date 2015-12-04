@@ -26,7 +26,7 @@ namespace SteamPaver.TileCreator
         }
 
 
-        public void CreateTile(string name, string pathOrUrl,BitmapSource image, Color backgroundColor, bool showLabel)
+        public void CreateTile(string name, string pathOrUrl,BitmapSource image, Color backgroundColor, bool showLabel, bool useDarkLabel)
         {
             var baseName = String.Join("", new Regex(@"[A-Za-z\d]").Matches(name).Cast<Match>().Select(o => o.Value));
             
@@ -42,7 +42,10 @@ namespace SteamPaver.TileCreator
             using (var fileStream = new FileStream(imagePath, FileMode.Create))
             {
                 BitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(image));
+                
+                var frame = BitmapFrame.Create(image);
+                encoder.Frames.Add(frame);
+                
                 encoder.Save(fileStream);
             }
             TouchFile(imagePath);
@@ -57,7 +60,7 @@ namespace SteamPaver.TileCreator
             var manifestName = $"{baseName}.VisualElementsManifest.xml";
             var manifestPath = Path.Combine(_folderPath, manifestName);
             
-            var manifest = string.Format(Resources.Win10TP2_TemplateManifest, imageName, backgroundColor,showLabel ?"on":"off");
+            var manifest = string.Format(Resources.Win10TP2_TemplateManifest, imageName, backgroundColor.ToHex(false),showLabel ?"on":"off", useDarkLabel?"dark":"light");
             File.WriteAllText(manifestPath, manifest);
             TouchFile(manifestPath);
 

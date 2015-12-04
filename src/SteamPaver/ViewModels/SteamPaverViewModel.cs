@@ -22,6 +22,10 @@ namespace SteamPaver
             var cachedGameDatas = CacheManager.LoadFromCache<GameData>()
                     .OrderBy(o => o.Installed ? 0 : 1)
                     .ThenBy(o => o.Name);
+
+            //var cachedGameDatas = new GameData[] { CacheManager.LoadFromCache<GameData>($"GameData_{219740}") };
+
+
             foreach (var cachedGameData in cachedGameDatas)
             {
                 GameDatas.Add(cachedGameData);

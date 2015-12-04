@@ -8,8 +8,8 @@
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DataContext="{d:DesignInstance Type=local:GameDataViewModel}"
-             d:DesignHeight="300" d:DesignWidth="600"
-              MouseDown="FocusOnMouseDown">
+             d:DesignHeight="700" d:DesignWidth="600"
+              MouseDown="FocusOnMouseDown" AllowDrop="True" DragEnter="Control_DragEnter" DragLeave="Control_DragLeave" DragOver="Control_DragOver" Drop="Control_Drop">
 
     <UserControl.InputBindings>
         <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteImageCommand}"/>
@@ -41,21 +41,14 @@
                             </Style.Triggers>
                         </Style>
                     </Label.Style>
-                    <TextBlock Text="Show Label on tile" />
+                    <TextBlock Text="Label type" />
                 </Label>
-                <CheckBox IsChecked="{Binding ShowLabel}"
-                          RenderTransformOrigin="0.5,0.5" 
+                <ComboBox SelectedItem="{Binding LabelType}"
+                          ItemsSource="{local:EnumValues {x:Type local:LabelTypes}}"
                           VerticalAlignment="Center" 
                           HorizontalAlignment="Center">
-                    <CheckBox.RenderTransform>
-                        <TransformGroup>
-                            <ScaleTransform ScaleX="1.5" ScaleY="1.55"/>
-                            <SkewTransform/>
-                            <RotateTransform/>
-                            <TranslateTransform/>
-                        </TransformGroup>
-                    </CheckBox.RenderTransform>
-                </CheckBox>
+                    
+                </ComboBox>
 
             </StackPanel>
             <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
@@ -81,33 +74,80 @@
                 </Grid.ColumnDefinitions>
 
                 <GroupBox Header="Draft image" Grid.Row="0" Grid.Column="0" ClipToBounds="True">
-                    <local:ImageCropper x:Name="Cropper" Image="{Binding SquareDraft}" CroppingRectangle="{Binding CroppingRectangle}" Focusable="True" >
+                    <local:ImageCropper x:Name="Cropper" 
+                                        Image="{Binding SquareDraft}" 
+                                        CroppingRectangle="{Binding CroppingRectangle}" 
+                                        Focusable="True">
+                        <local:ImageCropper.ImageBackgroundBrush>
+                            <SolidColorBrush Color="{Binding Color}"/>
+                        </local:ImageCropper.ImageBackgroundBrush>
                     </local:ImageCropper>
                 </GroupBox>
                 <GroupBox Header="Final image" Grid.Row="0" Grid.Column="1">
-                    <Viewbox Stretch="Uniform"  MaxWidth="150" MaxHeight="150">
-                        <Grid x:Name="RootGrid" Background="{Binding Color}" Width="150" Height="150">
-                            <Image Source="{Binding SquareFinal}" Stretch="Fill"  />
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <Grid  Width="71" Height="71" Margin="5">
+                            <Grid.Background>
+                                <SolidColorBrush Color="{Binding Color}"/>
+                            </Grid.Background>
+                            <Image Source="{Binding SquareFinal}" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" />
+
+                        </Grid>
+
+                        <Grid  Width="150" Height="150"  Margin="5">
+                            <Grid.Background>
+                                <SolidColorBrush Color="{Binding Color}"/>
+                            </Grid.Background>
+                            <Image Source="{Binding SquareFinal}" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality"  />
                             <Label  HorizontalAlignment="Left" 
                                     VerticalAlignment="Bottom"
                                     Visibility="{Binding ShowLabel,Converter={StaticResource BoolToVisibility}}">
+                                <Label.Foreground>
+                                    <SolidColorBrush Color="{Binding LabelColor}"/>
+                                </Label.Foreground>
                                 <TextBlock Text="{Binding Name}"/>
                             </Label>
                         </Grid>
-                    </Viewbox>
-                    
+                    </StackPanel>
+
                 </GroupBox>
             </Grid>
         </Grid>
-
         <DockPanel Grid.Row="2" LastChildFill="False">
-            <Button DockPanel.Dock="Right" Command="{Binding SetAsTileCommand}">
-                <Label FontWeight="SemiBold">
+            <Button  DockPanel.Dock="Right" Command="{Binding SetAsTileCommand}" Width="200" Background="#FFA6CCF1" VerticalAlignment="Bottom">
+                <Label FontWeight="SemiBold" FontSize="25">
                     <TextBlock>
                         Create Tile
                     </TextBlock>
                 </Label>
             </Button>
+            <Expander DockPanel.Dock="Left" ExpandDirection="Up" >
+                <Expander.Header>
+                    <Label FontWeight="SemiBold" FontSize="15">
+                        <TextBlock>
+                        Tools
+                        </TextBlock>
+                    </Label>
+                </Expander.Header>
+                <StackPanel Orientation="Vertical">
+                <Button Command="{Binding UpdateImageFromSteamCommand}" Grid.ColumnSpan="2" >
+                    <Label>
+                        <TextBlock>
+                        Refresh image from Steam
+                        </TextBlock>
+                    </Label>
+                </Button>
+                <Button Command="{Binding LoadImageCommand}" Grid.ColumnSpan="2">
+                    <Label>
+                        <TextBlock>
+                        Load image
+                        </TextBlock>
+                    </Label>
+                </Button>
+                <Label FontWeight="Thin" Grid.ColumnSpan="2" >
+                    <TextBlock Text="Ctrl+V or Drag &amp; Drop other images"/>
+                </Label>
+            </StackPanel>
+        </Expander>
         </DockPanel>
     </Grid>
 </UserControl>

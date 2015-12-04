@@ -12,7 +12,7 @@
 
     <Viewbox x:Name="MainViewBox" Stretch="Uniform" Visibility="{Binding Image,ElementName=Control, Converter={StaticResource NullToVisibility}}">
         <!--<local:AspectRatioLayoutDecorator AspectRatio="{Binding SquareDraft,Converter={StaticResource ImageToAspectRatioConverter}}">-->
-        <Grid x:Name="RootGrid" Background="#00000000">
+        <Grid x:Name="RootGrid"  Background="{Binding ImageBackgroundBrush,ElementName=Control}">
             <Image Source="{Binding Image,ElementName=Control}" Stretch="None"   />
             <Grid x:Name="CropGrid"
                   Margin="0"

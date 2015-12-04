@@ -15,7 +15,7 @@ namespace SteamPaver
     [ImplementPropertyChanged]
     public class GameDataViewModel
     {
-        public GameData Model { get;  }
+        public GameData Model { get; }
 
         public GameDataViewModel()
         {
@@ -32,6 +32,29 @@ namespace SteamPaver
             get
             {
                 return new RelayCommand(() => Model.SetFinalAsTile(), () => Model != null && Model.SquareFinal != null);
+            }
+        }
+
+        public ICommand UpdateImageFromSteamCommand
+        {
+            get
+            {
+                return new RelayCommand(() => Model.UpdateImageFromSteam(), () => Model != null);
+            }
+        }
+
+        public ICommand LoadImageCommand
+        {
+            get
+            {
+                return new RelayCommand(() =>
+                {
+                    var newImg = ImageUtils.LoadLocalImage();
+                    if (newImg != null)
+                    {
+                        Model.SquareDraft = newImg;
+                    }
+                }, () => Model != null);
             }
         }
 

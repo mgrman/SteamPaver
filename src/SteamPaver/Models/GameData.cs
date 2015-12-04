@@ -18,13 +18,23 @@ using System.Windows.Interop;
 
 namespace SteamPaver
 {
+    public enum LabelTypes
+    {
+        NoLabel,
+        LightLabel,
+        DarkLabel
+    }
+
+
     [ImplementPropertyChanged]
     [JsonObject()]
-    public class GameData:ICacheable
+    public class GameData : ICacheable
     {
         public string Name { get; set; }
 
         public int GameID { get; set; }
+
+        private bool _deserializingSquareDraft;
 
         private BitmapSource _squareDraft;
         [JsonIgnore]
@@ -40,33 +50,51 @@ namespace SteamPaver
                     return;
                 _squareDraft = value;
 
-                if (value == null)
+                if (_squareDraft == null)
                 {
                     CroppingRectangle = new Rect(0, 0, 100, 100);
                     SquareFinal = null;
                 }
                 else
                 {
-                    if (_squareDraft.IsDownloading)
+                    if (_deserializingSquareDraft)
                     {
-                        EventHandler handler = null;
-                        handler = (o, e) =>
-                         {
-                             _squareDraft.DownloadCompleted -= handler;
-
-                             double minSize = Math.Min(value.Width, value.Height);
-                             CroppingRectangle = new Rect(0, 0, minSize, minSize);
-                         };
-                        _squareDraft.DownloadCompleted += handler;
+                        if (SquareDraft.IsDownloading)
+                        {
+                            SquareDraft.DownloadCompleted += (o, e) =>
+                            {
+                                CropDraft();
+                            };
+                        }
+                        else
+                        {
+                            CropDraft();
+                        }
                     }
                     else
                     {
-                        double minSize = Math.Min(value.Width, value.Height);
-                        CroppingRectangle = new Rect(0, 0, minSize, minSize);
+                        if (SquareDraft.IsDownloading)
+                        {
+                            SquareDraft.DownloadCompleted += (o, e) =>
+                            {
+                                SetCroppingRectBaseOnImage();
+                            };
+                        }
+                        else
+                        {
+                            SetCroppingRectBaseOnImage();
+                        }
                     }
-
                 }
             }
+        }
+
+        private void SetCroppingRectBaseOnImage()
+        {
+
+            double minSize = Math.Min(_squareDraft.Width, _squareDraft.Height);
+            CroppingRectangle = new Rect(0, 0, minSize, minSize);
+
         }
 
         [JsonProperty]
@@ -77,7 +105,7 @@ namespace SteamPaver
                 if (SquareDraft == null)
                     return null;
                 StringBuilder sb = new StringBuilder();
-                if (SquareDraft is InteropBitmap || ((SquareDraft as BitmapImage)?.UriSource==null))
+                if (SquareDraft is InteropBitmap || ((SquareDraft as BitmapImage)?.UriSource == null))
                 {
                     sb.Append("PixelBitmap ");
 
@@ -95,13 +123,13 @@ namespace SteamPaver
 
                     sb.Append(Convert.ToBase64String(bit));
                 }
-                else if(SquareDraft is BitmapImage)
+                else if (SquareDraft is BitmapImage)
                 {
                     var im = SquareDraft as BitmapImage;
 
-                    
+
                     sb.Append("UriBitmap ");
-                    
+
                     sb.Append(im.UriSource);
                 }
 
@@ -110,36 +138,44 @@ namespace SteamPaver
             }
             set
             {
-                if(value == null)
+                _deserializingSquareDraft = true;
+                try
                 {
-                    SquareDraft = null;
-                    return;
-                }
-                var pixelBitmapTag = "PixelBitmap ";
-                var uriBitmapTag = "UriBitmap ";
-                if (value.StartsWith(pixelBitmapTag))
-                {
-
-                    var bytes = Convert.FromBase64String(value.Substring(pixelBitmapTag.Length));
-
-                    using (var ms = new System.IO.MemoryStream(bytes))
+                    if (value == null)
                     {
-                        var image = new BitmapImage();
-                        image.BeginInit();
-                        image.CacheOption = BitmapCacheOption.OnLoad; // here
-                        image.StreamSource = ms;
-                        image.EndInit();
-                        SquareDraft = image;
+                        SquareDraft = null;
+                        return;
+                    }
+                    var pixelBitmapTag = "PixelBitmap ";
+                    var uriBitmapTag = "UriBitmap ";
+                    if (value.StartsWith(pixelBitmapTag))
+                    {
+
+                        var bytes = Convert.FromBase64String(value.Substring(pixelBitmapTag.Length));
+
+                        using (var ms = new System.IO.MemoryStream(bytes))
+                        {
+                            var image = new BitmapImage();
+                            image.BeginInit();
+                            image.CacheOption = BitmapCacheOption.OnLoad; // here
+                            image.StreamSource = ms;
+                            image.EndInit();
+                            SquareDraft = image;
+                        }
+                    }
+                    else if (value.StartsWith(uriBitmapTag))
+                    {
+                        var uri = value.Substring(uriBitmapTag.Length);
+                        try
+                        {
+                            SquareDraft = new BitmapImage(new Uri(uri));
+                        }
+                        catch { }
                     }
                 }
-                else if(value.StartsWith(uriBitmapTag))
+                finally
                 {
-                    var uri = value.Substring(uriBitmapTag.Length);
-                    try
-                    {
-                        SquareDraft = new BitmapImage(new Uri(uri));
-                    }
-                    catch { }
+                    _deserializingSquareDraft = false;
                 }
             }
         }
@@ -175,7 +211,26 @@ namespace SteamPaver
             }
         }
 
-        public bool ShowLabel { get; set; }
+        public LabelTypes LabelType { get; set; }
+
+        public bool ShowLabel { get { return LabelType != LabelTypes.NoLabel; } }
+
+        public Color LabelColor
+        {
+            get
+            {
+                switch (LabelType)
+                {
+                    case LabelTypes.LightLabel:
+                        return Colors.White;
+                    case LabelTypes.NoLabel:
+                    default:
+                    case LabelTypes.DarkLabel:
+                        return Colors.Black;
+
+                }
+            }
+        }
 
         [JsonProperty]
         public bool Installed { get; private set; }
@@ -196,7 +251,7 @@ namespace SteamPaver
         }
 
         public GameData(int gameID)
-            :this()
+            : this()
         {
             GameID = gameID;
             UpdateInstalled();
@@ -230,17 +285,17 @@ namespace SteamPaver
             if (tileCreator == null)
                 throw new InvalidOperationException("No Tile creator available for this Windows version!");
 
-            tileCreator.CreateTile(Name, $"steam://rungameid/{GameID}", SquareFinal, Color, ShowLabel);
+            tileCreator.CreateTile(Name, $"steam://rungameid/{GameID}", SquareFinal, Color, LabelType != LabelTypes.NoLabel, LabelType == LabelTypes.DarkLabel);
         }
 
 
 
         private void CropDraft()
         {
-            if (SquareDraft == null)
+            if (SquareDraft == null || SquareDraft.IsDownloading)
                 return;
 
-            var rectangle=CroppingRectangle ;
+            var rectangle = CroppingRectangle;
 
             double scaleX = SquareDraft.DpiX / 96;
             double scaleY = SquareDraft.DpiY / 96;
@@ -255,17 +310,20 @@ namespace SteamPaver
 
             var intRect = new Int32Rect((int)rectangle.X, (int)rectangle.Y, (int)Math.Round(rectangle.Width), (int)Math.Round(rectangle.Height));
 
-            var croppedBmp = new CroppedBitmap(SquareDraft, intRect);
-
-
-            double scale = 1;
-            if (intRect.Width != intRect.Height)
+            try
             {
-                scale = (double)intRect.Height / intRect.Width;
+                var croppedBmp = new CroppedBitmap(SquareDraft, intRect);
+
+
+                double scale = 1;
+                if (intRect.Width != intRect.Height)
+                {
+                    scale = (double)intRect.Height / intRect.Width;
+                }
+
+                SquareFinal = new TransformedBitmap(croppedBmp, new ScaleTransform(scale, 1));
             }
-
-            SquareFinal = new TransformedBitmap(croppedBmp, new ScaleTransform(scale, 1));
-
+            catch { }
         }
 
         private void UpdateInstalled()

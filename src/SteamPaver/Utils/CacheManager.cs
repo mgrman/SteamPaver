@@ -60,6 +60,31 @@ namespace SteamPaver
             }
         }
 
+
+        public static T LoadFromCache<T>(string instanceID)
+            where T : ICacheable
+        {
+            string folderPath = GetAndCreateFolder<T>();
+            string path = Path.Combine(folderPath, $"{instanceID}.json");
+
+            if (File.Exists(path))
+            {
+
+                var json = File.ReadAllText(path);
+                using (var reader = new StringReader(json))
+                {
+
+                    using (var jsonReader = new JsonTextReader(reader))
+                    {
+                        var instance = _serializer.Deserialize<T>(jsonReader);
+
+                        return instance;
+                    }
+                }
+            }
+            return default(T);
+        }
+
         public static void SaveToCache<T>(this T obj)
             where T : ICacheable
         {

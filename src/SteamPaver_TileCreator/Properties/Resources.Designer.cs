@@ -65,7 +65,7 @@ namespace SteamPaver.TileCreator.Properties {
         ///    &lt;VisualElements
         ///        BackgroundColor = &quot;{1}&quot;
         ///        ShowNameOnSquare150x150Logo=&quot;{2}&quot;
-        ///        ForegroundText=&quot;dark&quot;
+        ///        ForegroundText=&quot;{3}&quot;
         ///        Square150x150Logo=&quot;{0}&quot;
         ///        Square70x70Logo=&quot;{0}&quot;
         ///        /&gt;

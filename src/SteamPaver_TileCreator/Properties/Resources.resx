@@ -122,7 +122,7 @@
     &lt;VisualElements
         BackgroundColor = "{1}"
         ShowNameOnSquare150x150Logo="{2}"
-        ForegroundText="dark"
+        ForegroundText="{3}"
         Square150x150Logo="{0}"
         Square70x70Logo="{0}"
         /&gt;

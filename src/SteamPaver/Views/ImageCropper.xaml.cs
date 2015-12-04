@@ -79,6 +79,18 @@ namespace SteamPaver
 
 
 
+        public Brush ImageBackgroundBrush
+        {
+            get { return (Brush)GetValue(ImageBackgroundBrushProperty); }
+            set { SetValue(ImageBackgroundBrushProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ImageBackgroundBrush.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ImageBackgroundBrushProperty =
+            DependencyProperty.Register("ImageBackgroundBrush", typeof(Brush), typeof(ImageCropper), new PropertyMetadata(null));
+
+
+
 
 
 

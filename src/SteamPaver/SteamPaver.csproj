@@ -40,6 +40,10 @@
   <PropertyGroup>
     <StartupObject>SteamPaver.App</StartupObject>
   </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.1-beta3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -88,6 +92,7 @@
     <Compile Include="Converters\InstalledToColorConverter.cs" />
     <Compile Include="Models\UserData.cs" />
     <Compile Include="Utils\CacheManager.cs" />
+    <Compile Include="Utils\MarkupExtensions.cs" />
     <Compile Include="Utils\ReflectionUtils.cs" />
     <Compile Include="ViewModels\GameDataViewModel.cs" />
     <Compile Include="Views\GameView.xaml.cs">
@@ -140,6 +145,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

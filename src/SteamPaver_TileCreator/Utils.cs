@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace SteamPaver.TileCreator
@@ -21,6 +22,15 @@ namespace SteamPaver.TileCreator
 
                 return new System.Drawing.Bitmap(bitmap);
             }
+        }
+
+        public static string ToHex(this Color col,bool includeAlpha)
+        {
+            if (includeAlpha)
+                return $"#{col.A.ToString("X2")}{col.R.ToString("X2")}{col.G.ToString("X2")}{col.B.ToString("X2")}";
+            else
+                return $"#{col.R.ToString("X2")}{col.G.ToString("X2")}{col.B.ToString("X2")}";
+
         }
     }
 }

@@ -10,6 +10,6 @@ namespace SteamPaver.TileCreator
 {
     public interface ITileCreator
     {
-        void CreateTile(string name, string pathOrUrl, BitmapSource image,Color backgroundColor,bool showLabel);
+        void CreateTile(string name, string pathOrUrl, BitmapSource image,Color backgroundColor,bool showLabel,bool useDarkLabel);
     }
 }

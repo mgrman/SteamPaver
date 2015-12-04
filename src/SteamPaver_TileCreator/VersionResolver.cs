@@ -11,7 +11,7 @@ namespace SteamPaver.TileCreator
     {
         static VersionResolver()
         {
-            if (Environment.OSVersion.Version.Build > 10586)
+            if (Environment.OSVersion.Version.Build >= 10586)
                 Creator = new Win10TP2TileCreator();
         }
 
