@@ -15,7 +15,7 @@ namespace SteamPaver.TileCreator
     public class Win10TP2TileCreator: ITileCreator
     {
        private readonly string _folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SteamPaver", "Win10TP2Tiles");
-       private readonly string _startMenuPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Microsoft", "Windows", "Start Menu", "Programs", "SteamPaverLinks");
+        private readonly string _startMenuPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Microsoft", "Windows", "Start Menu", "Programs", "SteamPaverLinks");
 
         public Win10TP2TileCreator()
         {
@@ -26,7 +26,7 @@ namespace SteamPaver.TileCreator
         }
 
 
-        public void CreateTile(string name, string pathOrUrl,BitmapSource image, Color backgroundColor, bool showLabel, bool useDarkLabel)
+        public string CreateTile(string name, string pathOrUrl,BitmapSource image, Color backgroundColor, bool showLabel, bool useDarkLabel)
         {
             var baseName = String.Join("", new Regex(@"[A-Za-z\d]").Matches(name).Cast<Match>().Select(o => o.Value));
             
@@ -71,6 +71,8 @@ namespace SteamPaver.TileCreator
             var linkPath = Path.Combine(_startMenuPath, linkName);
             CreateShortcut(linkPath, batPath, iconPath,name);
             TouchFile(linkPath);
+
+            return Path.Combine("SteamPaverLinks", linkName);
         }
 
         private void TouchFile(string path)

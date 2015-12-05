@@ -275,7 +275,7 @@ namespace SteamPaver
             });
         }
 
-        public void SetFinalAsTile()
+        public string SetFinalAsTile()
         {
             if (SquareFinal == null)
                 throw new InvalidOperationException("SquareFinal cannot be Null when calling this method");
@@ -284,7 +284,7 @@ namespace SteamPaver
             if (tileCreator == null)
                 throw new InvalidOperationException("No Tile creator available for this Windows version!");
 
-            tileCreator.CreateTile(Name, $"steam://rungameid/{GameID}", SquareFinal, Color, LabelType != LabelTypes.NoLabel, LabelType == LabelTypes.DarkLabel);
+            return tileCreator.CreateTile(Name, $"steam://rungameid/{GameID}", SquareFinal, Color, LabelType != LabelTypes.NoLabel, LabelType == LabelTypes.DarkLabel);
         }
 
 

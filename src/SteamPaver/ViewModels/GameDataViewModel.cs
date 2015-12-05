@@ -31,7 +31,21 @@ namespace SteamPaver
         {
             get
             {
-                return new RelayCommand(() => Model.SetFinalAsTile(), () => Model != null && Model.SquareFinal != null);
+                return new RelayCommand(() =>
+                {
+                    string path ;
+                    try
+                    {
+                        path=Model.SetFinalAsTile();
+                    }
+                    catch(Exception ex)
+                    {
+                        MessageBox.Show($"{ex.GetType().Name} - {ex.Message}", "Problem setting Tile", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                    MessageBox.Show($"Tile set successfully.\r\nTile can be found in \"{path}\".\r\nIt can be up to a minute before the new shortcuts become visible in Start menu.", "Problem setting Tile", MessageBoxButton.OK, MessageBoxImage.None);
+                }
+                , () => Model != null && Model.SquareFinal != null);
             }
         }
 
