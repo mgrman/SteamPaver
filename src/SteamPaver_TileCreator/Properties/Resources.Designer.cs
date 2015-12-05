@@ -62,7 +62,8 @@ namespace SteamPaver.TileCreator.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;Application xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
-        ///    &lt;VisualElements
+        ///    &lt;VisualElements 
+        ///        DisplayName=&quot;{4}&quot;
         ///        BackgroundColor = &quot;{1}&quot;
         ///        ShowNameOnSquare150x150Logo=&quot;{2}&quot;
         ///        ForegroundText=&quot;{3}&quot;

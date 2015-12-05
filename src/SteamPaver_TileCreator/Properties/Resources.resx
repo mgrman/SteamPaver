@@ -119,7 +119,8 @@
   </resheader>
   <data name="Win10TP2_TemplateManifest" xml:space="preserve">
     <value>&lt;Application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"&gt;
-    &lt;VisualElements
+    &lt;VisualElements 
+        DisplayName="{4}"
         BackgroundColor = "{1}"
         ShowNameOnSquare150x150Logo="{2}"
         ForegroundText="{3}"

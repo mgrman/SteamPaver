@@ -6,7 +6,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SteamPaver"
         mc:Ignorable="d"
-        Title="Steam Paver" Height="600" Width="800">
+        Title="Steam Paver" 
+        Width="800" 
+        Height="600" Icon="SteamPaver_dark.ico" >
     <Grid>
         <Grid.DataContext>
             <local:SteamPaverViewModel />
@@ -22,6 +24,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" >
                 <UniformGrid Rows="1" DataContext="{Binding UserData}">
@@ -48,6 +51,15 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            <!--<StackPanel Orientation="Horizontal" Grid.Row="2">
+                <Button Command="{Binding CreateTileForSelfCommand}">
+                    <Label>
+                        <TextBlock>
+                            Create tile for this App
+                        </TextBlock>
+                    </Label>
+                </Button>
+            </StackPanel>-->
         </Grid>
         <local:GameView Grid.Row="0" Grid.Column="1" DataContext="{Binding SelectedGameData,Converter={StaticResource CreateViewModel},ConverterParameter={x:Type local:GameDataViewModel}}">
             

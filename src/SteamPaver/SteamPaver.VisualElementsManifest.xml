@@ -1,0 +1,10 @@
+﻿<Application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <VisualElements
+      DisplayName="SteamPaver"
+      BackgroundColor = "#FFFFFF"
+      ShowNameOnSquare150x150Logo="off"
+      ForegroundText="dark"
+      Square150x150Logo="Resources\SteamPaver_dark.png"
+      Square70x70Logo="Resources\SteamPaver_dark.png"
+        />
+</Application>

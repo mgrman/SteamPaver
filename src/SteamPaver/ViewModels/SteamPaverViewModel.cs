@@ -8,6 +8,9 @@ using PropertyChanged;
 using Microsoft.Win32;
 using System.Collections.Specialized;
 using System.Windows.Input;
+using System.IO;
+using System.Windows.Media.Imaging;
+using System.Windows.Media;
 
 namespace SteamPaver
 {
@@ -116,6 +119,21 @@ namespace SteamPaver
             GameDatas.SuspendCollectionChanged = false;
             GameDatas.RefreshBinding();
         }
+
+
+        public ICommand CreateTileForSelfCommand { get
+            {
+                return new RelayCommand(() =>
+                {
+                    var creator = TileCreator.VersionResolver.Creator;
+
+                    var path = System.Reflection.Assembly.GetExecutingAssembly().Location;
+
+                    var bitmapPath = Path.Combine(Path.GetDirectoryName(path), "Resources", "SteamPaver_light.png");
+                    var bitmap = new BitmapImage(new Uri(bitmapPath));
+                    creator.CreateTile("SteamPaver", path, bitmap, Colors.Transparent, false, true);
+                });
+            } }
     }
 
     public class ObservableCollectionEx<T> : ObservableCollection<T>

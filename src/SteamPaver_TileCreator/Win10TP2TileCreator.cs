@@ -59,8 +59,10 @@ namespace SteamPaver.TileCreator
 
             var manifestName = $"{baseName}.VisualElementsManifest.xml";
             var manifestPath = Path.Combine(_folderPath, manifestName);
-            
-            var manifest = string.Format(Resources.Win10TP2_TemplateManifest, imageName, backgroundColor.ToHex(false),showLabel ?"on":"off", useDarkLabel?"dark":"light");
+
+            var backgroundColorString = backgroundColor == Colors.Transparent ? "Transparent" : backgroundColor.ToHex(false);
+
+            var manifest = string.Format(Resources.Win10TP2_TemplateManifest, imageName, backgroundColorString,showLabel ?"on":"off", useDarkLabel?"dark":"light",name);
             File.WriteAllText(manifestPath, manifest);
             TouchFile(manifestPath);
 

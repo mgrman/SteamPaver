@@ -26,6 +26,8 @@ namespace SteamPaver.TileCreator
 
         public static string ToHex(this Color col,bool includeAlpha)
         {
+
+
             if (includeAlpha)
                 return $"#{col.A.ToString("X2")}{col.R.ToString("X2")}{col.G.ToString("X2")}{col.B.ToString("X2")}";
             else
