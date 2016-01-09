@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using System.Threading;
 
 
-namespace SteamPaver
+namespace SteamPaver.Common
 {
     public static class ReflexionUtils
     {

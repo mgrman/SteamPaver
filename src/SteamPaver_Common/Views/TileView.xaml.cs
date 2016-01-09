@@ -16,16 +16,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SteamPaver
+namespace SteamPaver.Common
 {
     /// <summary>
-    /// Interaction logic for GameView.xaml
+    /// Interaction logic for TileView.xaml
     /// </summary>
-    public partial class GameView : UserControl
+    public partial class TileView : UserControl
     {
-        public GameDataViewModel ViewModel { get { return DataContext as GameDataViewModel; } }
+        public TileDataViewModel ViewModel { get { return DataContext as TileDataViewModel; } }
 
-        public GameView()
+        public TileView()
         {
             InitializeComponent();
 

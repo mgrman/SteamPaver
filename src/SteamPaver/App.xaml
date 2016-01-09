@@ -2,13 +2,15 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:SteamPaver"
+             xmlns:base="clr-namespace:SteamPaver.Common;assembly=SteamPaver.Common"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <local:InstalledToColorConverter x:Key="InstalledToColorConverter"/>
-        <local:ImageToAspectRatioConverter x:Key="ImageToAspectRatioConverter"/>
-        <local:NullToVisibilityConverter x:Key="NullToVisibility"/>
-        <local:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
-        <local:CreateViewModelConverter x:Key="CreateViewModel"/>
+        <base:InstalledToColorConverter x:Key="InstalledToColorConverter"/>
+        <base:ImageToAspectRatioConverter x:Key="ImageToAspectRatioConverter"/>
+        <base:NullToVisibilityConverter x:Key="NullToVisibility"/>
+        <base:BoolToVisibilityConverter x:Key="BoolToVisibility"/>
+
+        <local:CreateGameViewModelConverter x:Key="CreateGameViewModel"/>
         
     </Application.Resources>
 </Application>

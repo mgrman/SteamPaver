@@ -5,8 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace SteamPaver
+namespace SteamPaver.Common
 {
+    public interface ILabeledCommand : ICommand
+    {
+
+        string Label { get; }
+    }
+
     public class AsyncRelayCommand : ICommand
     {
         private Func<Task> asyncExecute;
@@ -117,5 +123,35 @@ namespace SteamPaver
 
             this.execute((T)parameter);
         }
+    }
+
+    
+    public class LabeledRelayCommand : RelayCommand, ILabeledCommand
+    {
+        public string Label { get; }
+
+        public LabeledRelayCommand(string label, Action execute, Func<bool> canExecute = null)
+            : base(execute, canExecute)
+        {
+            Label = label;
+        }
+
+
+        public static Lazy<LabeledRelayCommand> Lazy(string label,Action execute, Func<bool> canExecute = null)
+        {
+            return new Lazy<LabeledRelayCommand>(() => new LabeledRelayCommand(label,execute, canExecute));
+        }
+    }
+
+    public class LabeledRelayCommand<T> : RelayCommand<T>, ILabeledCommand
+    {
+        public string Label { get; }
+
+        public LabeledRelayCommand(string label,Action<T> execute, Func<T, bool> canExecute = null)
+            :base(execute,canExecute)
+        {
+            Label = label;
+        }
+
     }
 }

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
-namespace SteamPaver
+namespace SteamPaver.Common
 {
-    class ImageToAspectRatioConverter : IValueConverter
+    public class ImageToAspectRatioConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

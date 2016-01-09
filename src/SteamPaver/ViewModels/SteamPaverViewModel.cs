@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.IO;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
+using SteamPaver.Common;
 
 namespace SteamPaver
 {
@@ -102,7 +103,7 @@ namespace SteamPaver
             GameDatas.SuspendCollectionChanged = true;
             var games = Task.Run<IEnumerable<GameData>>(() =>
             {
-                return Steam.AllOwnedGames.GetGames(UserData.SteamCommunityId)
+                return AllOwnedGames.GetGames(UserData.SteamCommunityId)
                     .Select(o => new GameData(o))
                     .OrderBy(o => o.Installed ? 0 : 1)
                     .ThenBy(o => o.Name)

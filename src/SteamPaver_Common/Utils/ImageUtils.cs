@@ -9,9 +9,9 @@ using System.Drawing;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 
-namespace SteamPaver
+namespace SteamPaver.Common
 {
-    static class ImageUtils
+    public static class ImageUtils
     {
 
         public static BitmapImage LoadLocalImage()

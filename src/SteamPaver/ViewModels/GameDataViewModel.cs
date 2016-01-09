@@ -9,81 +9,28 @@ using Microsoft.Win32;
 using System.Collections.Specialized;
 using System.Windows.Input;
 using System.Windows;
+using SteamPaver.Common;
 
 namespace SteamPaver
 {
     [ImplementPropertyChanged]
-    public class GameDataViewModel
+    public class GameDataViewModel: TileDataViewModel
     {
-        public GameData Model { get; }
-
         public GameDataViewModel()
+            :base(new GameData())
         {
-            Model = new GameData();
         }
 
         public GameDataViewModel(GameData data)
+            :base(data)
         {
-            Model = data;
         }
 
-        public ICommand SetAsTileCommand
-        {
-            get
-            {
-                return new RelayCommand(() =>
-                {
-                    string path ;
-                    try
-                    {
-                        path=Model.SetFinalAsTile();
-                    }
-                    catch(Exception ex)
-                    {
-                        MessageBox.Show($"{ex.GetType().Name} - {ex.Message}", "Problem setting Tile", MessageBoxButton.OK, MessageBoxImage.Error);
-                        return;
-                    }
-                    MessageBox.Show($"Tile set successfully.\r\nTile can be found in \"{path}\".\r\nIt can be up to a minute before the new shortcuts become visible in Start menu.", "Problem setting Tile", MessageBoxButton.OK, MessageBoxImage.None);
-                }
-                , () => Model != null && Model.SquareFinal != null);
-            }
-        }
+        public GameData GameModel { get { return Model as GameData; } }
 
-        public ICommand UpdateImageFromSteamCommand
-        {
-            get
+        public override IEnumerable<ILabeledCommand> CustomCommands { get
             {
-                return new RelayCommand(() => Model.UpdateImageFromSteam(), () => Model != null);
-            }
-        }
-
-        public ICommand LoadImageCommand
-        {
-            get
-            {
-                return new RelayCommand(() =>
-                {
-                    var newImg = ImageUtils.LoadLocalImage();
-                    if (newImg != null)
-                    {
-                        Model.SquareDraft = newImg;
-                    }
-                }, () => Model != null);
-            }
-        }
-
-        public ICommand PasteImageCommand
-        {
-            get
-            {
-                return new RelayCommand(() =>
-                {
-                    Model.SquareDraft = Clipboard.GetImage();
-                }, () =>
-                {
-                    return Model != null && Clipboard.ContainsImage();
-
-                });
+                yield return new LabeledRelayCommand("Update image from Steam",() => GameModel.UpdateImageFromSteam(), () => Model != null);
             }
         }
     }

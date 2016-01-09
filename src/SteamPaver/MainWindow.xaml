@@ -5,6 +5,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SteamPaver"
+        xmlns:base="clr-namespace:SteamPaver.Common;assembly=SteamPaver.Common"
         mc:Ignorable="d"
         Title="Steam Paver" 
         Width="800" 
@@ -61,8 +62,8 @@
                 </Button>
             </StackPanel>-->
         </Grid>
-        <local:GameView Grid.Row="0" Grid.Column="1" DataContext="{Binding SelectedGameData,Converter={StaticResource CreateViewModel},ConverterParameter={x:Type local:GameDataViewModel}}">
+        <base:TileView Grid.Row="0" Grid.Column="1" DataContext="{Binding SelectedGameData,Converter={StaticResource CreateGameViewModel}}">
             
-        </local:GameView>
+        </base:TileView>
     </Grid>
 </Window>

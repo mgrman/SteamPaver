@@ -9,14 +9,18 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
-namespace SteamPaver
+namespace SteamPaver.Common
 {
-    class NullToVisibilityConverter : IValueConverter
+    public class BoolToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            
-            return value==null?Visibility.Hidden:Visibility.Visible;
+            bool boolVal = value as bool? ?? false;
+
+            if (parameter != null && parameter.ToString().ToLower() == "invert")
+                boolVal = !boolVal;
+
+            return boolVal ? Visibility.Visible: Visibility.Hidden;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

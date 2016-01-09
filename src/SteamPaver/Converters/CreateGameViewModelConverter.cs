@@ -5,21 +5,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
 namespace SteamPaver
 {
-    class InstalledToColorConverter : IValueConverter
+    public class CreateGameViewModelConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if(value as bool? == true)
-            {
-                return System.Windows.Media.Brushes.Green;
-            }
-            else
-            {
-                return System.Windows.Media.Brushes.LightGray;
-            }
+
+            var gameData = value as GameData;
+            if (gameData == null)
+                return null;
+
+            return new GameDataViewModel(gameData);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

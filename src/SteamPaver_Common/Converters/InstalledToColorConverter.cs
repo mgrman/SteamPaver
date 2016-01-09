@@ -5,21 +5,21 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
-using System.Windows.Media.Imaging;
 
-namespace SteamPaver
+namespace SteamPaver.Common
 {
-    class CreateViewModelConverter : IValueConverter
+    public class InstalledToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!(parameter is Type))
-                throw new ArgumentException("Parameter must be type",nameof(parameter));
-
-            if (value == null)
-                return null;
-
-            return Activator.CreateInstance(parameter as Type, value);
+            if(value as bool? == true)
+            {
+                return System.Windows.Media.Brushes.Green;
+            }
+            else
+            {
+                return System.Windows.Media.Brushes.LightGray;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

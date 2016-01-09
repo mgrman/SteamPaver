@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace SteamPaver
+namespace SteamPaver.Common
 {
     public interface ICacheable
     {
@@ -15,7 +15,7 @@ namespace SteamPaver
     }
 
     [System.AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
-    sealed class CacheLocationAttribute : Attribute
+    public sealed class CacheLocationAttribute : Attribute
     {
         readonly string cacheFolderName;
 
@@ -33,7 +33,7 @@ namespace SteamPaver
     }
 
 
-    static class CacheManager
+    public static class CacheManager
     {
         private static JsonSerializer _serializer = JsonSerializer.Create();
         
@@ -129,7 +129,7 @@ namespace SteamPaver
             var atr = type.GetAtribute<CacheLocationAttribute>();
             string folderName = atr?.CacheFolderName ?? type.Name;
 
-            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SteamPaver", "Cache", folderName);
+            string path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SteamPaver.Common", "Cache", folderName);
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);

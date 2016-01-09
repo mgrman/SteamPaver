@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Markup;
 
-namespace SteamPaver
+namespace SteamPaver.Common
 {
         public class EnumValuesExtension : MarkupExtension
         {
