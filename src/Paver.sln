@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paver", "Paver\Paver.csproj", "{99C9E82C-C594-446D-AA59-8FFBC43AD226}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paver.TileCreator", "Paver.TileCreator\Paver.TileCreator.csproj", "{AB8B448C-DD74-4D60-A041-3E5D03A32180}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paver.Common", "Paver.Common\Paver.Common.csproj", "{D1DC3D9D-2DA5-4F50-999A-3E6EDF423E19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paver.Steam", "Paver.Steam\Paver.Steam.csproj", "{68DD4238-18C2-40ED-92B2-2B22B9AFDB4F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{99C9E82C-C594-446D-AA59-8FFBC43AD226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99C9E82C-C594-446D-AA59-8FFBC43AD226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99C9E82C-C594-446D-AA59-8FFBC43AD226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99C9E82C-C594-446D-AA59-8FFBC43AD226}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AB8B448C-DD74-4D60-A041-3E5D03A32180}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AB8B448C-DD74-4D60-A041-3E5D03A32180}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AB8B448C-DD74-4D60-A041-3E5D03A32180}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AB8B448C-DD74-4D60-A041-3E5D03A32180}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1DC3D9D-2DA5-4F50-999A-3E6EDF423E19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1DC3D9D-2DA5-4F50-999A-3E6EDF423E19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1DC3D9D-2DA5-4F50-999A-3E6EDF423E19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1DC3D9D-2DA5-4F50-999A-3E6EDF423E19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68DD4238-18C2-40ED-92B2-2B22B9AFDB4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68DD4238-18C2-40ED-92B2-2B22B9AFDB4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68DD4238-18C2-40ED-92B2-2B22B9AFDB4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68DD4238-18C2-40ED-92B2-2B22B9AFDB4F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

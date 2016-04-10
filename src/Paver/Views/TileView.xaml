@@ -1,0 +1,162 @@
+﻿<UserControl x:Class="Paver.Views.TileView"
+             x:Name="Control"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:v="clr-namespace:Paver.Views"
+             xmlns:m="clr-namespace:Paver.Common.Models;assembly=Paver.Common"
+             xmlns:vm="clr-namespace:Paver.Common.ViewModels;assembly=Paver.Common"
+             xmlns:u="clr-namespace:Paver.Common.Utils;assembly=Paver.Common"
+             xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=vm:TileDataViewModel}"
+             d:DesignHeight="700" d:DesignWidth="600"
+              MouseDown="FocusOnMouseDown" AllowDrop="True" DragEnter="Control_DragEnter" DragLeave="Control_DragLeave" DragOver="Control_DragOver" Drop="Control_Drop">
+
+    <UserControl.InputBindings>
+        <KeyBinding Gesture="Ctrl+V" Command="{Binding PasteImageCommand}"/>
+    </UserControl.InputBindings>
+
+    <Grid  Visibility="{Binding Converter={StaticResource NullToVisibility}}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*"/>
+            <ColumnDefinition Width="1*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Row="0" Grid.ColumnSpan="2">
+            <Label HorizontalAlignment="Left" FontSize="18" FontFamily="Segoe WP Semibold" Content="{Binding Model.Name}" />
+            <Label HorizontalAlignment="Left" Content="{Binding Model.AdditionalInfo}"  />
+            <StackPanel  Orientation="Horizontal" HorizontalAlignment="Left">
+                <Label Width="120">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="FontWeight" Value="Normal"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Model.ShowLabel}" Value="True">
+
+                                    <Setter Property="FontWeight" Value="Bold"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                    <TextBlock Text="Label type" />
+                </Label>
+                <ComboBox Width="100" SelectedItem="{Binding Model.LabelType}"
+                          ItemsSource="{u:EnumValues {x:Type m:LabelTypes}}"
+                          VerticalAlignment="Center" 
+                          HorizontalAlignment="Center">
+
+                </ComboBox>
+
+            </StackPanel>
+            <StackPanel  Orientation="Horizontal"  HorizontalAlignment="Left">
+                <Label Width="120">
+                    <TextBlock Text="Background Color" />
+                </Label>
+                <xctk:ColorPicker Width="100" 
+                                  SelectedColor="{Binding Model.Color}" 
+                                  ShowAvailableColors="False" 
+                                  ShowDropDownButton="False" 
+                                  ColorMode="ColorCanvas" 
+                                  ShowStandardColors="False" 
+                                  UsingAlphaChannel="False" 
+                                  ShowAdvancedButton="False"/>
+
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"  HorizontalAlignment="Left" Visibility="{Binding CanSelectAvailableLinkTypes,Converter={StaticResource BoolToVisibility}}">
+                <Label Width="120">
+                    <TextBlock Text="Link type" />
+                </Label>
+                <ComboBox Width="100" SelectedItem="{Binding Model.LinkType}"
+                          ItemsSource="{Binding AvailableLinkTypes}"
+                          VerticalAlignment="Center" 
+                          HorizontalAlignment="Center">
+
+                </ComboBox>
+
+            </StackPanel>
+        </StackPanel>
+        
+        <GroupBox Grid.Column="0" Grid.Row="1" Header="Draft image"  ClipToBounds="True">
+            <v:ImageCropper x:Name="Cropper" 
+                            Image="{Binding Model.SquareDraft}" 
+                            CroppingRectangle="{Binding Model.CroppingRectangle}" 
+                            Focusable="True">
+                <v:ImageCropper.ImageBackgroundBrush>
+                    <SolidColorBrush Color="{Binding Model.Color}"/>
+                </v:ImageCropper.ImageBackgroundBrush>
+            </v:ImageCropper>
+        </GroupBox>
+        <GroupBox Grid.Column="1" Grid.Row="1"  Header="Final image" >
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Grid  Width="71" Height="71" Margin="5">
+                    <Grid.Background>
+                        <SolidColorBrush Color="{Binding Model.Color}"/>
+                    </Grid.Background>
+                    <Image Source="{Binding Model.SquareFinal}" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality" />
+
+                </Grid>
+
+                <Grid  Width="150" Height="150"  Margin="5">
+                    <Grid.Background>
+                        <SolidColorBrush Color="{Binding Model.Color}"/>
+                    </Grid.Background>
+                    <Image Source="{Binding Model.SquareFinal}" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality"  />
+                    <Label  HorizontalAlignment="Left" 
+                                    VerticalAlignment="Bottom"
+                                    Visibility="{Binding Model.ShowLabel,Converter={StaticResource BoolToVisibility}}">
+                        <Label.Foreground>
+                            <SolidColorBrush Color="{Binding Model.LabelColor}"/>
+                        </Label.Foreground>
+                        <TextBlock Text="{Binding Model.Name}"/>
+                    </Label>
+                </Grid>
+            </StackPanel>
+
+        </GroupBox>
+
+        <Border Grid.Row="2" Grid.Column="0" CornerRadius="2" BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ActiveBorderBrushKey}}">
+            <Expander ExpandDirection="Up" >
+                <Expander.Header>
+                    <Label FontWeight="SemiBold" FontSize="15">
+                        <TextBlock>
+                        Tools
+                        </TextBlock>
+                    </Label>
+                </Expander.Header>
+
+                <StackPanel Orientation="Vertical">
+                    <ItemsControl ItemsSource="{Binding AllCommands}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Command="{Binding }" Grid.ColumnSpan="2" >
+                                    <Label>
+                                        <TextBlock Text="{Binding Label}">
+
+                                        </TextBlock>
+                                    </Label>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                    <Label FontWeight="Thin" Grid.ColumnSpan="2" >
+                        <TextBlock Text="Ctrl+V or Drag &amp; Drop other images"/>
+                    </Label>
+                </StackPanel>
+            </Expander>
+        </Border>
+        <Button Grid.Row="2" Grid.Column="1" Command="{Binding SetAsTileCommand}"  Background="#FFA6CCF1" VerticalAlignment="Bottom">
+            <Label FontWeight="SemiBold" FontSize="25">
+                <TextBlock>
+                        Create Tile
+                </TextBlock>
+            </Label>
+        </Button>
+    </Grid>
+</UserControl>
