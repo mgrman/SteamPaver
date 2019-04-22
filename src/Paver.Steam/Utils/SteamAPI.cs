@@ -9,6 +9,9 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Paver.Common;
 using System.Windows.Media.Imaging;
+using Gameloop.Vdf;
+using Gameloop.Vdf.Linq;
+using System.IO;
 
 namespace Paver.Steam
 {
@@ -54,28 +57,53 @@ namespace Paver.Steam
 
         private IReadOnlyCollection<int> GetInstalledGameIds()
         {
-            HashSet<int> games = new HashSet<int>();
-
-            var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
-            var names = key.GetSubKeyNames();
-
-            var gameTasks = new List<GameData>();
-
-            foreach (var name in names)
+            try
             {
-                if (name.Contains("Steam"))
+                var libraryFoldersConfigPath = @"C:\Program Files (x86)\Steam\steamapps\libraryfolders.vdf";
+
+            var libraryFoldersConfig= VdfConvert.Deserialize(File.ReadAllText(libraryFoldersConfigPath));
+            var appIds = new List<int>();
+            foreach (VProperty folder in libraryFoldersConfig.Value)
+            {
+                try
                 {
-                    int parsInt;
-                    var values = name.Split(' ');
-                    if (values.Length > 2 && Int32.TryParse(values[2], out parsInt))
+                    if (Regex.IsMatch(folder.Key, @"\d+"))
                     {
-                        games.Add(parsInt);
+                        var libraryFolder = folder.Value.ToString();
+
+                        var manifestFilePaths = Directory.GetFiles(libraryFolder, "appmanifest_*.acf", SearchOption.AllDirectories);
+
+                        foreach (var manifestFilePath in manifestFilePaths)
+                        {
+                            try
+                            {
+                                dynamic manifest = VdfConvert.Deserialize(File.ReadAllText(manifestFilePath));
+
+                                var appId = int.Parse(manifest.Value.appid.ToString());
+
+                                appIds.Add(appId);
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex);
+                            }
+                        }
                     }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
             }
-
-            return games;
+            return appIds;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return Array.Empty<int>();
+            }
         }
+
         private bool GetIsInstalled(int gameId)
         {
             var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall");
