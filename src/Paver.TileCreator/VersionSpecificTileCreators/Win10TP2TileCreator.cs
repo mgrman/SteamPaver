@@ -1,5 +1,4 @@
-﻿
-using Paver.Common;
+﻿using Paver.Common;
 using Paver.Common.Models;
 using Paver.TileCreator.Properties;
 using Prism.Logging;
@@ -17,6 +16,7 @@ namespace Paver.TileCreator
 {
     internal class Win10TP2TileCreator : ITileCreator
     {
+        private static readonly Regex _replaceRegex = new Regex(@"({.*?})|(')");
         private readonly string _proxyFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "SteamPaver", "Win10TP2Tiles");
         private readonly string _proxyStartMenuPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Microsoft", "Windows", "Start Menu", "Programs", "SteamPaverLinks");
 
@@ -25,7 +25,7 @@ namespace Paver.TileCreator
         public Win10TP2TileCreator(ILoggerFacade logger)
         {
             _logger = logger;
-            //TODO 
+            //TODO
             //Add logging!!
 
             if (!Directory.Exists(_proxyFolderPath))
@@ -34,25 +34,6 @@ namespace Paver.TileCreator
                 Directory.CreateDirectory(_proxyStartMenuPath);
         }
 
-        void ITileCreator.CreateTile(TileSettings tileSettings)
-        {
-            var supportedLinkTypes = GetSupportedLinkTypes(tileSettings);
-            if (!supportedLinkTypes.Contains(tileSettings.LinkType))
-                throw new ArgumentException($"LinkType:{tileSettings.LinkType} is not supported for this instance! (Supported LinkTypes:{supportedLinkTypes})", nameof(tileSettings));
-
-            switch (tileSettings.LinkType)
-            {
-                case LinkTypes.DirectLink:
-                    CreateDirectLink(tileSettings);
-                    break;
-                case LinkTypes.ProxyLink:
-                default:
-                    CreateProxyLink(tileSettings);
-                    break;
-            }
-        }
-
-
         public IEnumerable<LinkTypes> GetSupportedLinkTypes(TileSettings tileSettings)
         {
             if (tileSettings.Uri.IsFile)
@@ -60,19 +41,18 @@ namespace Paver.TileCreator
                 yield return LinkTypes.DirectLink;
                 yield return LinkTypes.ProxyLink;
             }
-            else {
+            else
+            {
                 yield return LinkTypes.ProxyLink;
             }
         }
 
         public void CreateDirectLink(TileSettings tileSettings)
         {
-
             if (!tileSettings.Uri.IsFile)
                 throw new ArgumentException("Path must lead to a local file.", nameof(tileSettings.Uri));
 
             string localPath = tileSettings.Uri.ToString();
-
 
             var baseName = Path.GetFileNameWithoutExtension(localPath);
             var folderPath = Path.GetDirectoryName(localPath);
@@ -81,7 +61,6 @@ namespace Paver.TileCreator
             string imageName_75 = CreateImage(tileSettings, baseName, folderPath, 70);
 
             string manifestPath = CreateManifest(tileSettings.Name, tileSettings, baseName, folderPath, imageName_150, imageName_75);
-
         }
 
         public void CreateProxyLink(TileSettings tileSettings)
@@ -100,110 +79,26 @@ namespace Paver.TileCreator
             string manifestPath = CreateManifest(tileSettings.Name, tileSettings, baseName, folderPath, imageName_150, imageName_75);
 
             string linkName = CreateLink(tileSettings.Name, baseName, startMenuPath, executablePath, iconPath);
-
         }
 
-        #region Components
-
-        private string CreateProxyExecutable(Uri uri, string baseName, string folderPath)
+        void ITileCreator.CreateTile(TileSettings tileSettings)
         {
-            var execName = $"{baseName}.vbs";
-            var execPath = Path.Combine(folderPath, execName);
-            File.WriteAllText(execPath, $"CreateObject(\"Wscript.Shell\").Run \"\"\"\" & \"{uri}\" & \"\"\"\", 0, False");
-            TouchFile(execPath);
-            return execPath;
+            var supportedLinkTypes = GetSupportedLinkTypes(tileSettings);
+            if (!supportedLinkTypes.Contains(tileSettings.LinkType))
+                throw new ArgumentException($"LinkType:{tileSettings.LinkType} is not supported for this instance! (Supported LinkTypes:{supportedLinkTypes})", nameof(tileSettings));
+
+            switch (tileSettings.LinkType)
+            {
+                case LinkTypes.DirectLink:
+                    CreateDirectLink(tileSettings);
+                    break;
+
+                case LinkTypes.ProxyLink:
+                default:
+                    CreateProxyLink(tileSettings);
+                    break;
+            }
         }
-
-        private string CreateLink(string name, string baseName, string startMenuPath, string batPath, string iconPath)
-        {
-            var linkName = $"{baseName} (SteamPaver).lnk";
-            var linkPath = Path.Combine(startMenuPath, linkName);
-            CreateShortcut(linkPath, batPath, iconPath, name);
-            TouchFile(linkPath);
-            return linkName;
-        }
-
-        private static readonly Regex _replaceRegex = new Regex(@"({.*?})|(')");
-
-        private string CreateManifest(string name, TileSettings tileSettings, string baseName, string folderPath, string imageName_150, string imageName_75)
-        {
-            var manifestName = $"{baseName}.VisualElementsManifest.xml";
-            var manifestPath = Path.Combine(folderPath, manifestName);
-
-            var backgroundColorString = tileSettings.BackgroundColor == Colors.Transparent ? "Transparent" : tileSettings.BackgroundColor.ToHex(false);
-
-            Dictionary<string, string> replacementsDict = new Dictionary<string, string>();
-            replacementsDict["{imagePath_150}"] = imageName_150;
-            replacementsDict["{imagePath_75}"] = imageName_75;
-            replacementsDict["{color}"] = backgroundColorString;
-            replacementsDict["{showName}"] = tileSettings.ShowLabel ? "on" : "off";
-            replacementsDict["{labelType}"] = tileSettings.UseDarkLabel ? "dark" : "light";
-            replacementsDict["{name}"] = name;
-            replacementsDict["'"] = "\"";
-
-
-            string win10TP2_TemplateManifest = @"
-    <Application Id='App'>
-        <VisualElements 
-            DisplayName = '{name}'
-            Description = '{name}'
-            BackgroundColor = '{color}'
-            ShowNameOnSquare150x150Logo='{showName}'
-            ForegroundText='{labelType}'
-            Square150x150Logo='{imagePath_150}'
-            Square70x70Logo='{imagePath_75}'
-            Logo='{imagePath_150}'
-            SmallLogo='{imagePath_75}'
-            ToastCapable='false'>
-            <DefaultTile ShowName='allLogos'/>
-            <SplashScreen BackgroundColor='white' Image='images\splash-sdk.png'/>
-        </VisualElements>
-    </Application>";
-
-            var manifest = _replaceRegex.Replace(win10TP2_TemplateManifest, (m) => replacementsDict[m.Value]).Trim();
-
-
-
-            File.WriteAllText(manifestPath, manifest);
-            TouchFile(manifestPath);
-            return manifestPath;
-        }
-
-        private string CreateIcon(TileSettings tileSettings, string baseName, string folderPath)
-        {
-            var iconName = $"{baseName}.ico";
-            var iconPath = Path.Combine(folderPath, iconName);
-            SaveIcon(tileSettings.Image, iconPath);
-            TouchFile(iconPath);
-            return iconPath;
-        }
-
-        private string CreateImage(TileSettings tileSettings, string baseName, string folderPath, int resolution)
-        {
-            var resizedImage = tileSettings.Image.CreateResizedImage(resolution, resolution, false);
-
-
-            var imageName = $"{baseName}_{resolution}x{resolution}.png";
-            var imagePath = Path.Combine(folderPath, imageName);
-            resizedImage.SaveAsPng(imagePath);
-
-
-            //using (var fileStream = new FileStream(imagePath, FileMode.Create))
-            //{
-            //    BitmapEncoder encoder = new PngBitmapEncoder();
-            //    var frame = BitmapFrame.Create(tileSettings.Image);
-            //    encoder.Frames.Add(frame);
-
-            //    encoder.Save(fileStream);
-            //}
-            TouchFile(imagePath);
-            return imageName;
-        }
-
-
-        #endregion
-
-        #region Utils
 
         private static void TouchFile(string path)
         {
@@ -228,7 +123,7 @@ namespace Paver.TileCreator
 
         private static void SaveIcon(BitmapSource bitmapImage, string path)
         {
-            var scale = 256.0 / bitmapImage.Width;
+            var scale = 256.0 / bitmapImage.PixelWidth;
             var scaledImage = new TransformedBitmap(bitmapImage, new ScaleTransform(scale, scale));
 
             var icon = new Inedo.Iconator.IconFile();
@@ -237,8 +132,92 @@ namespace Paver.TileCreator
             icon.Save(path);
         }
 
-        #endregion
+        private string CreateProxyExecutable(Uri uri, string baseName, string folderPath)
+        {
+            var execName = $"{baseName}.vbs";
+            var execPath = Path.Combine(folderPath, execName);
+            File.WriteAllText(execPath, $"CreateObject(\"Wscript.Shell\").Run \"\"\"\" & \"{uri}\" & \"\"\"\", 0, False");
+            TouchFile(execPath);
+            return execPath;
+        }
 
+        private string CreateLink(string name, string baseName, string startMenuPath, string batPath, string iconPath)
+        {
+            var linkName = $"{baseName} (SteamPaver).lnk";
+            var linkPath = Path.Combine(startMenuPath, linkName);
+            CreateShortcut(linkPath, batPath, iconPath, name);
+            TouchFile(linkPath);
+            return linkName;
+        }
 
+        private string CreateManifest(string name, TileSettings tileSettings, string baseName, string folderPath, string imageName_150, string imageName_75)
+        {
+            var manifestName = $"{baseName}.VisualElementsManifest.xml";
+            var manifestPath = Path.Combine(folderPath, manifestName);
+
+            var backgroundColorString = tileSettings.BackgroundColor == Colors.Transparent ? "Transparent" : tileSettings.BackgroundColor.ToHex(false);
+
+            Dictionary<string, string> replacementsDict = new Dictionary<string, string>();
+            replacementsDict["{imagePath_150}"] = imageName_150;
+            replacementsDict["{imagePath_75}"] = imageName_75;
+            replacementsDict["{color}"] = backgroundColorString;
+            replacementsDict["{showName}"] = tileSettings.ShowLabel ? "on" : "off";
+            replacementsDict["{labelType}"] = tileSettings.UseDarkLabel ? "dark" : "light";
+            replacementsDict["{name}"] = name;
+            replacementsDict["'"] = "\"";
+
+            string win10TP2_TemplateManifest = @"
+    <Application Id='App'>
+        <VisualElements
+            DisplayName = '{name}'
+            Description = '{name}'
+            BackgroundColor = '{color}'
+            ShowNameOnSquare150x150Logo='{showName}'
+            ForegroundText='{labelType}'
+            Square150x150Logo='{imagePath_150}'
+            Square70x70Logo='{imagePath_75}'
+            Logo='{imagePath_150}'
+            SmallLogo='{imagePath_75}'
+            ToastCapable='false'>
+            <DefaultTile ShowName='allLogos'/>
+            <SplashScreen BackgroundColor='white' Image='images\splash-sdk.png'/>
+        </VisualElements>
+    </Application>";
+
+            var manifest = _replaceRegex.Replace(win10TP2_TemplateManifest, (m) => replacementsDict[m.Value]).Trim();
+
+            File.WriteAllText(manifestPath, manifest);
+            TouchFile(manifestPath);
+            return manifestPath;
+        }
+
+        private string CreateIcon(TileSettings tileSettings, string baseName, string folderPath)
+        {
+            var iconName = $"{baseName}.ico";
+            var iconPath = Path.Combine(folderPath, iconName);
+            SaveIcon(tileSettings.Image, iconPath);
+            TouchFile(iconPath);
+            return iconPath;
+        }
+
+        private string CreateImage(TileSettings tileSettings, string baseName, string folderPath, int resolution)
+        {
+            var resizedImage = tileSettings.Image.CreateResizedImage(resolution, resolution, false);
+
+            var imageName = $"{baseName}_{resolution}x{resolution}.png";
+            var imagePath = Path.Combine(folderPath, imageName);
+            resizedImage.SaveAsPng(imagePath);
+
+            //using (var fileStream = new FileStream(imagePath, FileMode.Create))
+            //{
+            //    BitmapEncoder encoder = new PngBitmapEncoder();
+            //    var frame = BitmapFrame.Create(tileSettings.Image);
+            //    encoder.Frames.Add(frame);
+
+            //    encoder.Save(fileStream);
+            //}
+            TouchFile(imagePath);
+            return imageName;
+        }
     }
 }
